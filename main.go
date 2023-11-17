@@ -10,6 +10,8 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
+const frameTime = 1
+
 func main() {
 	pixelgl.Run(run)
 }
@@ -32,7 +34,7 @@ func run() {
 	for !win.Closed() {
 		t := time.Since(last).Seconds()
 
-		if t >= 1.0 {
+		if t >= frameTime {
 			b.Update()
 			last = time.Now()
 		}
