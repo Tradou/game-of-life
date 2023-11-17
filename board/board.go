@@ -1,6 +1,7 @@
 package board
 
 import (
+	"game-of-life/mutation"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"math/rand"
@@ -13,18 +14,7 @@ type Board struct {
 	Rules Ruler
 }
 
-type Grid [][]Cell
-
-type Cell struct {
-	State    string
-	Mutation MutationAttribute
-}
-
-type MutationAttribute struct {
-	Name        string
-	Probability float32
-	Fn          func()
-}
+type Grid [][]mutation.Cell
 
 type Ruler interface {
 	UnderPopulation(grid Grid, i, j int) bool
@@ -48,10 +38,13 @@ func New(r Ruler) *Board {
 func GenerateCell() Grid {
 	grid := make(Grid, Rows)
 	for i := range grid {
-		grid[i] = make([]Cell, Cols)
+		grid[i] = make([]mutation.Cell, Cols)
 		for j := range grid[i] {
 			if rand.Intn(100) <= pGenerate*100 {
 				grid[i][j].State = "ALIVE"
+				if mutation.CanMutate(grid[i][j]) {
+					mutation.FindMutation(&grid[i][j])
+				}
 			} else {
 				grid[i][j].State = "DEAD"
 			}
@@ -61,7 +54,7 @@ func GenerateCell() Grid {
 }
 
 func (b *Board) Draw(win *pixelgl.Window) {
-	win.Clear(pixel.RGB(1, 1, 1)) // Blanc
+	win.Clear(pixel.RGB(1, 1, 1))
 
 	for i, row := range b.Grid {
 		for j := range row {
@@ -83,22 +76,20 @@ func (b *Board) DrawCell(win *pixelgl.Window, x, y int) {
 func (b *Board) Update() {
 	newGrid := make(Grid, Rows)
 	for i := range b.Grid {
-		newGrid[i] = make([]Cell, Cols)
+		newGrid[i] = make([]mutation.Cell, Cols)
 		copy(newGrid[i], b.Grid[i])
-	}
 
-	for i, row := range b.Grid {
-		for j := range row {
+		for j := range b.Grid[i] {
 			if isAlive(b.Grid, i, j) {
-				if b.Rules.UnderPopulation(b.Grid, i, j) {
-					newGrid[i][j].State = "DEAD"
-				}
-				if b.Rules.OverPopulation(b.Grid, i, j) {
+				if b.Rules.UnderPopulation(b.Grid, i, j) || b.Rules.OverPopulation(b.Grid, i, j) {
 					newGrid[i][j].State = "DEAD"
 				}
 			} else {
 				if b.Rules.Reproduce(b.Grid, i, j) {
 					newGrid[i][j].State = "ALIVE"
+					if mutation.CanMutate(b.Grid[i][j]) {
+						mutation.FindMutation(&newGrid[i][j])
+					}
 				}
 			}
 		}
