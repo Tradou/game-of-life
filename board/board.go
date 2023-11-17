@@ -13,7 +13,18 @@ type Board struct {
 	Rules Ruler
 }
 
-type Grid [][]bool
+type Grid [][]Cell
+
+type Cell struct {
+	State    string
+	Mutation MutationAttribute
+}
+
+type MutationAttribute struct {
+	Name        string
+	Probability float32
+	Fn          func()
+}
 
 type Ruler interface {
 	UnderPopulation(grid Grid, i, j int) bool
@@ -37,9 +48,13 @@ func New(r Ruler) *Board {
 func GenerateCell() Grid {
 	grid := make(Grid, Rows)
 	for i := range grid {
-		grid[i] = make([]bool, Cols)
+		grid[i] = make([]Cell, Cols)
 		for j := range grid[i] {
-			grid[i][j] = rand.Intn(100) <= pGenerate*100
+			if rand.Intn(100) <= pGenerate*100 {
+				grid[i][j].State = "ALIVE"
+			} else {
+				grid[i][j].State = "DEAD"
+			}
 		}
 	}
 	return grid
@@ -49,8 +64,8 @@ func (b *Board) Draw(win *pixelgl.Window) {
 	win.Clear(pixel.RGB(1, 1, 1)) // Blanc
 
 	for i, row := range b.Grid {
-		for j, alive := range row {
-			if alive {
+		for j := range row {
+			if isAlive(b.Grid, i, j) {
 				b.DrawCell(win, j*Size, (Rows-i-1)*Size)
 			}
 		}
@@ -68,7 +83,7 @@ func (b *Board) DrawCell(win *pixelgl.Window, x, y int) {
 func (b *Board) Update() {
 	newGrid := make(Grid, Rows)
 	for i := range b.Grid {
-		newGrid[i] = make([]bool, Cols)
+		newGrid[i] = make([]Cell, Cols)
 		copy(newGrid[i], b.Grid[i])
 	}
 
@@ -76,14 +91,14 @@ func (b *Board) Update() {
 		for j := range row {
 			if isAlive(b.Grid, i, j) {
 				if b.Rules.UnderPopulation(b.Grid, i, j) {
-					newGrid[i][j] = false
+					newGrid[i][j].State = "DEAD"
 				}
 				if b.Rules.OverPopulation(b.Grid, i, j) {
-					newGrid[i][j] = false
+					newGrid[i][j].State = "DEAD"
 				}
 			} else {
 				if b.Rules.Reproduce(b.Grid, i, j) {
-					newGrid[i][j] = true
+					newGrid[i][j].State = "ALIVE"
 				}
 			}
 		}

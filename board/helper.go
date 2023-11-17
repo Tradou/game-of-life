@@ -12,7 +12,7 @@ func CountNeighbors(grid Grid, i, j int) int {
 			adjacentI, adjacentJ := i+di, j+dj
 
 			if IsInside(adjacentI, adjacentJ, len(grid), len(grid[0])) {
-				if grid[adjacentI][adjacentJ] {
+				if isAlive(grid, adjacentI, adjacentJ) {
 					neighbors++
 				}
 			}
@@ -27,5 +27,5 @@ func IsInside(i, j, rows, cols int) bool {
 }
 
 func isAlive(grid Grid, i, j int) bool {
-	return grid[i][j]
+	return grid[i][j].State == "ALIVE"
 }
