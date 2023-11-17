@@ -6,6 +6,8 @@ import (
 	"math/rand"
 )
 
+const pGenerate = 0.5
+
 type Board struct {
 	Grid  Grid
 	Rules Ruler
@@ -37,7 +39,7 @@ func GenerateCell() Grid {
 	for i := range grid {
 		grid[i] = make([]bool, Cols)
 		for j := range grid[i] {
-			grid[i][j] = rand.Intn(2) == 0
+			grid[i][j] = rand.Intn(100) <= pGenerate*100
 		}
 	}
 	return grid
