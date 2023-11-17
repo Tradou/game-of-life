@@ -1,6 +1,8 @@
 package main
 
 import (
+	"game-of-life/board"
+	gameRules "game-of-life/rules"
 	"math/rand"
 	"time"
 
@@ -8,13 +10,7 @@ import (
 	"github.com/faiface/pixel/pixelgl"
 )
 
-const (
-	rows = 50
-	cols = 100
-	size = 10
-)
-
-type Grid [][]bool
+const frameTime = 1
 
 func main() {
 	pixelgl.Run(run)
@@ -22,7 +18,7 @@ func main() {
 
 func run() {
 	cfg := pixelgl.WindowConfig{
-		Bounds: pixel.R(0, 0, float64(cols*size), float64(rows*size)),
+		Bounds: pixel.R(0, 0, board.Cols*board.Size, board.Rows*board.Size),
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -30,40 +26,19 @@ func run() {
 	}
 
 	rand.New(rand.NewSource(time.Now().UnixNano()))
-	grid := generateCell()
+	rules := &gameRules.Rules{}
+	b := board.New(rules)
+
+	last := time.Now()
 
 	for !win.Closed() {
-		draw(win, grid)
-	}
-}
+		t := time.Since(last).Seconds()
 
-func generateCell() Grid {
-	grid := make(Grid, rows)
-	for i := range grid {
-		grid[i] = make([]bool, cols)
-		for j := range grid[i] {
-			grid[i][j] = rand.Intn(2) == 0
+		if t >= frameTime {
+			b.Update()
+			last = time.Now()
 		}
+
+		b.Draw(win)
 	}
-	return grid
-}
-
-func draw(win *pixelgl.Window, grid Grid) {
-	win.Clear(pixel.RGB(1, 1, 1)) // Blanc
-
-	for i, row := range grid {
-		for j, alive := range row {
-			if alive {
-				drawCell(win, j*size, (rows-i-1)*size)
-			}
-		}
-	}
-
-	win.Update()
-}
-
-func drawCell(win *pixelgl.Window, x, y int) {
-	rect := pixel.R(float64(x), float64(y), float64(x+size), float64(y+size))
-	sprite := pixel.NewSprite(nil, rect)
-	sprite.Draw(win, pixel.IM.Moved(rect.Center()).Scaled(rect.Center(), 0.5))
 }
