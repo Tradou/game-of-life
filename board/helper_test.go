@@ -51,7 +51,7 @@ func TestCountNeighbors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := CountNeighbors(Grid(tt.grid), tt.row, tt.col)
+			got := CountNeighbors(tt.grid, tt.row, tt.col)
 			if got != tt.expectedAliv {
 				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, got, tt.expectedAliv)
 			}
