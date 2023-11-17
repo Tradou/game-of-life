@@ -25,3 +25,7 @@ func CountNeighbors(grid Grid, i, j int) int {
 func IsInside(i, j, rows, cols int) bool {
 	return i >= 0 && i < rows && j >= 0 && j < cols
 }
+
+func isAlive(grid Grid, i, j int) bool {
+	return grid[i][j]
+}

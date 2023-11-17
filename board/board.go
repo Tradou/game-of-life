@@ -14,7 +14,9 @@ type Board struct {
 type Grid [][]bool
 
 type Ruler interface {
-	Underpopulation(grid Grid, i, j int) bool
+	UnderPopulation(grid Grid, i, j int) bool
+	OverPopulation(grid Grid, i, j int) bool
+	Reproduce(grid Grid, i, j int) bool
 }
 
 const (
@@ -70,8 +72,17 @@ func (b *Board) Update() {
 
 	for i, row := range b.Grid {
 		for j := range row {
-			if b.Rules.Underpopulation(b.Grid, i, j) {
-				newGrid[i][j] = false
+			if isAlive(b.Grid, i, j) {
+				if b.Rules.UnderPopulation(b.Grid, i, j) {
+					newGrid[i][j] = false
+				}
+				if b.Rules.OverPopulation(b.Grid, i, j) {
+					newGrid[i][j] = false
+				}
+			} else {
+				if b.Rules.Reproduce(b.Grid, i, j) {
+					newGrid[i][j] = true
+				}
 			}
 		}
 	}
