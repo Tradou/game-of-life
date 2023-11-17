@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+          sudo apt-get install -y libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev
 
       - name: Install go dependencies
         run: go mod tidy
