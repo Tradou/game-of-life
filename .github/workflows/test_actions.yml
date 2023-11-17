@@ -19,6 +19,6 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - name: Install dependencies
-        run: go get .
+        run: go mod tidy
       - name: Test with the Go CLI
         run: go test
