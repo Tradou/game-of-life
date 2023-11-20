@@ -96,7 +96,7 @@ func TestIsMutant(t *testing.T) {
 		expectedMutant bool
 	}{
 		{name: "Cell is dead and not mutant", grid: Grid{{{State: false}}}, row: 0, col: 0, expectedMutant: false},
-		{name: "Cell is dead and mutant", grid: Grid{{{State: false, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutant: true},
+		{name: "Cell is dead and mutant", grid: Grid{{{State: false, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutant: false},
 		{name: "Cell is alive and not mutant", grid: Grid{{{State: true}}}, row: 0, col: 0, expectedMutant: false},
 		{name: "Cell is alive and mutant", grid: Grid{{{State: true, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutant: true},
 		{name: "UnknownCaseConsideredAsMutant", grid: Grid{{{State: true, Mutation: mutation.Attribute{Name: "TOTO MUTATION"}}}}, row: 0, col: 0, expectedMutant: true},
@@ -123,7 +123,7 @@ func TestHaveMutation(t *testing.T) {
 		expectedMutation bool
 	}{
 		{name: "Cell is dead and not mutant", grid: Grid{{{State: false}}}, row: 0, col: 0, expectedMutation: false},
-		{name: "Cell is dead and mutant", grid: Grid{{{State: false, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutation: true},
+		{name: "Cell is dead and mutant", grid: Grid{{{State: false, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutation: false},
 		{name: "Cell is alive and not mutant", grid: Grid{{{State: true}}}, row: 0, col: 0, expectedMutation: false},
 		{name: "Cell is alive and mutant", grid: Grid{{{State: true, Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutation: true},
 		{name: "UnknownCaseConsideredAsMutant", grid: Grid{{{State: true, Mutation: mutation.Attribute{Name: "TOTO MUTATION"}}}}, row: 0, col: 0, expectedMutation: false},

@@ -60,10 +60,10 @@ func (b *Board) Draw(win *pixelgl.Window) {
 
 	for i, row := range b.Grid {
 		for j := range row {
-			if isAlive(b.Grid[i][j]) {
-				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{A: 255})
-			} else if isMutant(b.Grid[i][j]) {
+			if isMutant(b.Grid[i][j]) {
 				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{G: 255, A: 255})
+			} else if isAlive(b.Grid[i][j]) {
+				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{A: 255})
 			}
 		}
 	}
