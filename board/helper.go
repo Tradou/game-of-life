@@ -35,3 +35,7 @@ func isAlive(c mutation.Cell) bool {
 func isMutant(c mutation.Cell) bool {
 	return c.Mutation.Name != ""
 }
+
+func haveMutation(c mutation.Cell, m string) bool {
+	return c.Mutation.Name == m
+}

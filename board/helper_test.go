@@ -109,3 +109,30 @@ func TestIsMutant(t *testing.T) {
 		})
 	}
 }
+
+func TestHaveMutation(t *testing.T) {
+	mutationName := "Lonely Cell"
+
+	tests := []struct {
+		name             string
+		grid             Grid
+		row, col         int
+		mutationName     string
+		expectedMutation bool
+	}{
+		{name: "Cell is dead and not mutant", grid: Grid{{{State: "DEAD"}}}, row: 0, col: 0, expectedMutation: false},
+		{name: "Cell is dead and mutant", grid: Grid{{{State: "DEAD", Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutation: true},
+		{name: "Cell is alive and not mutant", grid: Grid{{{State: "ALIVE"}}}, row: 0, col: 0, expectedMutation: false},
+		{name: "Cell is alive and mutant", grid: Grid{{{State: "ALIVE", Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutation: true},
+		{name: "UnknownCaseConsideredAsMutant", grid: Grid{{{State: "ALIVE", Mutation: mutation.Attribute{Name: "TOTO MUTATION"}}}}, row: 0, col: 0, expectedMutation: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := haveMutation(tt.grid[tt.row][tt.col], mutationName)
+			if got != tt.expectedMutation {
+				t.Errorf("haveMutation(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedMutation)
+			}
+		})
+	}
+}
