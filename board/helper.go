@@ -1,5 +1,7 @@
 package board
 
+import "game-of-life/mutation"
+
 func CountNeighbors(grid Grid, i, j int) int {
 	neighbors := 0
 
@@ -12,7 +14,7 @@ func CountNeighbors(grid Grid, i, j int) int {
 			adjacentI, adjacentJ := i+di, j+dj
 
 			if IsInside(adjacentI, adjacentJ, len(grid), len(grid[0])) {
-				if isAlive(grid, adjacentI, adjacentJ) {
+				if isAlive(grid[adjacentI][adjacentJ]) {
 					neighbors++
 				}
 			}
@@ -26,10 +28,10 @@ func IsInside(i, j, rows, cols int) bool {
 	return i >= 0 && i < rows && j >= 0 && j < cols
 }
 
-func isAlive(grid Grid, i, j int) bool {
-	return grid[i][j].State == "ALIVE"
+func isAlive(c mutation.Cell) bool {
+	return c.State == "ALIVE"
 }
 
-func isMutant(grid Grid, i, j int) bool {
-	return grid[i][j].Mutation.Name != ""
+func isMutant(c mutation.Cell) bool {
+	return c.Mutation.Name != ""
 }

@@ -78,7 +78,7 @@ func TestIsAlive(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isAlive(tt.grid, tt.row, tt.col)
+			got := isAlive(tt.grid[tt.row][tt.col])
 			if got != tt.expectedAlive {
 				t.Errorf("isAlive(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedAlive)
 			}
@@ -102,7 +102,7 @@ func TestIsMutant(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := isMutant(tt.grid, tt.row, tt.col)
+			got := isMutant(tt.grid[tt.row][tt.col])
 			if got != tt.expectedMutant {
 				t.Errorf("isMutant(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedMutant)
 			}

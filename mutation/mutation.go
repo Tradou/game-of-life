@@ -9,11 +9,15 @@ const pMutate = 0.05
 var mutations = []Attribute{
 	{
 		Name:        "Lonely Cell",
-		Probability: 0.1,
+		Probability: 0.2,
 	},
 	{
 		Name:        "Friendly Cell",
 		Probability: 0.07,
+	},
+	{
+		Name:        "Pregnant Cell",
+		Probability: 0.02,
 	},
 }
 
