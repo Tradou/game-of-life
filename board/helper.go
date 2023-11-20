@@ -43,3 +43,12 @@ func isMutant(c mutation.Cell) bool {
 func haveMutation(c mutation.Cell, m string) bool {
 	return isAlive(c) && c.Mutation.Name == m
 }
+
+func kill(c *mutation.Cell) {
+	c.State = false
+	c.Mutation = mutation.Attribute{}
+}
+
+func create(c *mutation.Cell) {
+	c.State = true
+}

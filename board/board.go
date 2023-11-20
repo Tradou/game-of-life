@@ -43,12 +43,12 @@ func GenerateCell() Grid {
 		grid[i] = make([]mutation.Cell, Cols)
 		for j := range grid[i] {
 			if rand.Intn(100) <= pGenerate*100 {
-				grid[i][j].State = true
+				create(&grid[i][j])
 				if mutation.CanMutate(grid[i][j], 0) {
 					mutation.FindMutation(&grid[i][j], 0)
 				}
 			} else {
-				grid[i][j].State = false
+				kill(&grid[i][j])
 			}
 		}
 	}
@@ -91,14 +91,14 @@ func (b *Board) Update() {
 		for j := range b.Grid[i] {
 			if isAlive(b.Grid[i][j]) {
 				if b.Rules.UnderPopulation(b.Grid, i, j) || b.Rules.OverPopulation(b.Grid, i, j) {
-					newGrid[i][j].State = false
+					kill(&newGrid[i][j])
 				}
 				if isMutant(b.Grid[i][j]) && b.Rules.DieFromInstability(b.Grid, i, j) {
-					newGrid[i][j].State = false
+					kill(&newGrid[i][j])
 				}
 			} else {
 				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce == true {
-					newGrid[i][j].State = true
+					create(&newGrid[i][j])
 					if mutation.CanMutate(b.Grid[i][j], mutantParents) {
 						mutation.FindMutation(&newGrid[i][j], mutantParents)
 					}
