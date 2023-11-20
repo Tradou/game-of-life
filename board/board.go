@@ -4,6 +4,7 @@ import (
 	"game-of-life/mutation"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"image/color"
 	"math/rand"
 )
 
@@ -59,7 +60,9 @@ func (b *Board) Draw(win *pixelgl.Window) {
 	for i, row := range b.Grid {
 		for j := range row {
 			if isAlive(b.Grid, i, j) {
-				b.DrawCell(win, j*Size, (Rows-i-1)*Size)
+				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{A: 255})
+			} else if isMutant(b.Grid, i, j) {
+				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{G: 255, A: 255})
 			}
 		}
 	}
@@ -67,9 +70,14 @@ func (b *Board) Draw(win *pixelgl.Window) {
 	win.Update()
 }
 
-func (b *Board) DrawCell(win *pixelgl.Window, x, y int) {
+func (b *Board) DrawCell(win *pixelgl.Window, x, y int, color color.RGBA) {
 	rect := pixel.R(float64(x), float64(y), float64(x+Size), float64(y+Size))
-	sprite := pixel.NewSprite(nil, rect)
+	img := pixel.MakePictureData(pixel.R(0, 0, Size, Size))
+	for i := range img.Pix {
+		img.Pix[i] = color
+	}
+
+	sprite := pixel.NewSprite(img, img.Bounds())
 	sprite.Draw(win, pixel.IM.Moved(rect.Center()).Scaled(rect.Center(), 0.5))
 }
 
