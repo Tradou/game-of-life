@@ -105,7 +105,7 @@ func (b *Board) Update() {
 					}
 				}
 			} else {
-				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce == true {
+				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce {
 					create(&newGrid[i][j])
 					if mutation.CanMutate(newGrid[i][j], mutantParents) {
 						mutation.FindMutation(&newGrid[i][j], mutantParents)
