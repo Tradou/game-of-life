@@ -37,23 +37,23 @@ func TestIsInside(t *testing.T) {
 
 func TestCountNeighbors(t *testing.T) {
 	tests := []struct {
-		name         string
-		grid         Grid
-		row, col     int
-		expectedAliv int
+		name          string
+		grid          Grid
+		row, col      int
+		expectedAlive int
 	}{
 		{name: "NoNeighbors", grid: Grid{{{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1},
-		{name: "OneNeighbor", grid: Grid{{{State: "ALIVE"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1, expectedAliv: 1},
-		{name: "FourNeighbors", grid: Grid{{{State: "ALIVE"}, {State: "DEAD"}, {State: "ALIVE"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "ALIVE"}, {State: "DEAD"}, {State: "ALIVE"}}}, row: 1, col: 1, expectedAliv: 4},
-		{name: "AllNeighborsAlive", grid: Grid{{{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}, {{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}, {{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}}, row: 1, col: 1, expectedAliv: 8},
+		{name: "OneNeighbor", grid: Grid{{{State: "ALIVE"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1, expectedAlive: 1},
+		{name: "FourNeighbors", grid: Grid{{{State: "ALIVE"}, {State: "DEAD"}, {State: "ALIVE"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "ALIVE"}, {State: "DEAD"}, {State: "ALIVE"}}}, row: 1, col: 1, expectedAlive: 4},
+		{name: "AllNeighborsAlive", grid: Grid{{{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}, {{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}, {{State: "ALIVE"}, {State: "ALIVE"}, {State: "ALIVE"}}}, row: 1, col: 1, expectedAlive: 8},
 		{name: "EdgeCase", grid: Grid{{{State: "ALIVE"}}}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := CountNeighbors(tt.grid, tt.row, tt.col)
-			if got != tt.expectedAliv {
-				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, got, tt.expectedAliv)
+			if got != tt.expectedAlive {
+				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, got, tt.expectedAlive)
 			}
 		})
 	}
