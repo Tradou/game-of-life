@@ -18,11 +18,6 @@ var mutations = []Attribute{
 		Probability: 0.07,
 		Stability:   80,
 	},
-	{
-		Name:        "Pregnant Cell",
-		Probability: 0.02,
-		Stability:   80,
-	},
 }
 
 type Cell struct {
