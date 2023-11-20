@@ -100,7 +100,7 @@ func (b *Board) Update() {
 				if haveMutation(b.Grid[i][j], "Warrior cell") {
 					for _, cell := range getAdjacentLivingCells(b.Grid, i, j, 2) {
 						if b.Rules.WarriorInvasion() {
-							kill(&b.Grid[cell.I][cell.J])
+							kill(&newGrid[cell.I][cell.J])
 						}
 					}
 				}
