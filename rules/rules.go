@@ -11,6 +11,10 @@ func (r *Rules) UnderPopulation(grid board.Grid, i, j int) bool {
 	if grid[i][j].Mutation.Name == "Lonely Cell" {
 		return false
 	}
+	if grid[i][j].Mutation.Name == "Warrior Cell" {
+		return false
+	}
+
 	neighbors, _ := board.CountNeighbors(grid, i, j)
 	return neighbors < 2
 }
@@ -21,6 +25,11 @@ func (r *Rules) OverPopulation(grid board.Grid, i, j int) bool {
 
 		return neighbors > 4
 	}
+
+	if grid[i][j].Mutation.Name == "Warrior Cell" {
+		return false
+	}
+
 	neighbors, _ := board.CountNeighbors(grid, i, j)
 
 	return neighbors > 3
