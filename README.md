@@ -15,6 +15,7 @@ Cells can mutate when they are created.
 The behaviour of mutating can be described this way:
 - A cell is created ( by any means )
 - A cell have x percent chance ( pMutate ) to undergo a genetic modification
-- If the cell undergo a genetic modification, the same cell have x percent chance ( Attribute.Probability ) to gain the modification.
+- If the cell undergo a genetic modification, the same cell have x percent chance ( Attribute.Probability ) to gain the modification
+- A cell create from one or several mutatede cells have more chances to undergo a genetic modification
 
 Mutations does not obey exactly to base rules, moreover they aren't stables, they can die ( Attribute.Stability )
