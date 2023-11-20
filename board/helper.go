@@ -29,3 +29,7 @@ func IsInside(i, j, rows, cols int) bool {
 func isAlive(grid Grid, i, j int) bool {
 	return grid[i][j].State == "ALIVE"
 }
+
+func isMutant(grid Grid, i, j int) bool {
+	return grid[i][j].Mutation.Name != ""
+}

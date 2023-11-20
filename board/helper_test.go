@@ -1,6 +1,9 @@
 package board
 
-import "testing"
+import (
+	"game-of-life/mutation"
+	"testing"
+)
 
 func TestIsInside(t *testing.T) {
 	tests := []struct {
@@ -54,6 +57,54 @@ func TestCountNeighbors(t *testing.T) {
 			got := CountNeighbors(tt.grid, tt.row, tt.col)
 			if got != tt.expectedAlive {
 				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, got, tt.expectedAlive)
+			}
+		})
+	}
+}
+
+func TestIsAlive(t *testing.T) {
+	tests := []struct {
+		name          string
+		grid          Grid
+		row, col      int
+		expectedAlive bool
+	}{
+		{name: "BeDead", grid: Grid{{{State: "DEAD"}}}, row: 0, col: 0, expectedAlive: false},
+		{name: "BeAlive", grid: Grid{{{State: "ALIVE"}}}, row: 0, col: 0, expectedAlive: true},
+		{name: "UnknownCaseConsideredAsDead", grid: Grid{{{State: "FOO"}}}, row: 0, col: 0, expectedAlive: false},
+		{name: "BeDead", grid: Grid{{{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 0, expectedAlive: false},
+		{name: "BeAlive", grid: Grid{{{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1, expectedAlive: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isAlive(tt.grid, tt.row, tt.col)
+			if got != tt.expectedAlive {
+				t.Errorf("isAlive(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedAlive)
+			}
+		})
+	}
+}
+
+func TestIsMutant(t *testing.T) {
+	tests := []struct {
+		name           string
+		grid           Grid
+		row, col       int
+		expectedMutant bool
+	}{
+		{name: "Cell is dead and not mutant", grid: Grid{{{State: "DEAD"}}}, row: 0, col: 0, expectedMutant: false},
+		{name: "Cell is dead and mutant", grid: Grid{{{State: "DEAD", Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutant: true},
+		{name: "Cell is alive and not mutant", grid: Grid{{{State: "ALIVE"}}}, row: 0, col: 0, expectedMutant: false},
+		{name: "Cell is alive and mutant", grid: Grid{{{State: "ALIVE", Mutation: mutation.Attribute{Name: "Lonely Cell"}}}}, row: 0, col: 0, expectedMutant: true},
+		{name: "UnknownCaseConsideredAsMutant", grid: Grid{{{State: "ALIVE", Mutation: mutation.Attribute{Name: "TOTO MUTATION"}}}}, row: 0, col: 0, expectedMutant: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isMutant(tt.grid, tt.row, tt.col)
+			if got != tt.expectedMutant {
+				t.Errorf("isMutant(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedMutant)
 			}
 		})
 	}
