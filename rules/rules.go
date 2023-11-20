@@ -33,5 +33,5 @@ func (r *Rules) Reproduce(grid board.Grid, i, j int) (bool, int, int) {
 }
 
 func (r *Rules) DieFromInstability(grid board.Grid, i, j int) bool {
-	return rand.Intn(100) < grid[i][j].Mutation.Stability
+	return rand.Intn(100) >= grid[i][j].Mutation.Stability
 }
