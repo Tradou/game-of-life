@@ -1,8 +1,10 @@
 package board
 
 import (
+	"game-of-life/mutation"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"image/color"
 	"math/rand"
 )
 
@@ -13,23 +15,14 @@ type Board struct {
 	Rules Ruler
 }
 
-type Grid [][]Cell
-
-type Cell struct {
-	State    string
-	Mutation MutationAttribute
-}
-
-type MutationAttribute struct {
-	Name        string
-	Probability float32
-	Fn          func()
-}
+type Grid [][]mutation.Cell
 
 type Ruler interface {
 	UnderPopulation(grid Grid, i, j int) bool
 	OverPopulation(grid Grid, i, j int) bool
-	Reproduce(grid Grid, i, j int) bool
+	Reproduce(grid Grid, i, j int) (bool, int, int)
+	DieFromInstability(grid Grid, i, j int) bool
+	WarriorInvasion() bool
 }
 
 const (
@@ -48,12 +41,15 @@ func New(r Ruler) *Board {
 func GenerateCell() Grid {
 	grid := make(Grid, Rows)
 	for i := range grid {
-		grid[i] = make([]Cell, Cols)
+		grid[i] = make([]mutation.Cell, Cols)
 		for j := range grid[i] {
 			if rand.Intn(100) <= pGenerate*100 {
-				grid[i][j].State = "ALIVE"
+				create(&grid[i][j])
+				if mutation.CanMutate(grid[i][j], 0) {
+					mutation.FindMutation(&grid[i][j], 0)
+				}
 			} else {
-				grid[i][j].State = "DEAD"
+				kill(&grid[i][j])
 			}
 		}
 	}
@@ -61,12 +57,14 @@ func GenerateCell() Grid {
 }
 
 func (b *Board) Draw(win *pixelgl.Window) {
-	win.Clear(pixel.RGB(1, 1, 1)) // Blanc
+	win.Clear(pixel.RGB(1, 1, 1))
 
 	for i, row := range b.Grid {
 		for j := range row {
-			if isAlive(b.Grid, i, j) {
-				b.DrawCell(win, j*Size, (Rows-i-1)*Size)
+			if isMutant(b.Grid[i][j]) {
+				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{G: 255, A: 255})
+			} else if isAlive(b.Grid[i][j]) {
+				b.DrawCell(win, j*Size, (Rows-i-1)*Size, color.RGBA{A: 255})
 			}
 		}
 	}
@@ -74,31 +72,44 @@ func (b *Board) Draw(win *pixelgl.Window) {
 	win.Update()
 }
 
-func (b *Board) DrawCell(win *pixelgl.Window, x, y int) {
+func (b *Board) DrawCell(win *pixelgl.Window, x, y int, color color.RGBA) {
 	rect := pixel.R(float64(x), float64(y), float64(x+Size), float64(y+Size))
-	sprite := pixel.NewSprite(nil, rect)
+	img := pixel.MakePictureData(pixel.R(0, 0, Size, Size))
+	for i := range img.Pix {
+		img.Pix[i] = color
+	}
+
+	sprite := pixel.NewSprite(img, img.Bounds())
 	sprite.Draw(win, pixel.IM.Moved(rect.Center()).Scaled(rect.Center(), 0.5))
 }
 
 func (b *Board) Update() {
 	newGrid := make(Grid, Rows)
 	for i := range b.Grid {
-		newGrid[i] = make([]Cell, Cols)
+		newGrid[i] = make([]mutation.Cell, Cols)
 		copy(newGrid[i], b.Grid[i])
-	}
 
-	for i, row := range b.Grid {
-		for j := range row {
-			if isAlive(b.Grid, i, j) {
-				if b.Rules.UnderPopulation(b.Grid, i, j) {
-					newGrid[i][j].State = "DEAD"
+		for j := range b.Grid[i] {
+			if isAlive(b.Grid[i][j]) {
+				if b.Rules.UnderPopulation(b.Grid, i, j) || b.Rules.OverPopulation(b.Grid, i, j) {
+					kill(&newGrid[i][j])
 				}
-				if b.Rules.OverPopulation(b.Grid, i, j) {
-					newGrid[i][j].State = "DEAD"
+				if isMutant(b.Grid[i][j]) && b.Rules.DieFromInstability(b.Grid, i, j) {
+					kill(&newGrid[i][j])
+				}
+				if haveMutation(b.Grid[i][j], "Warrior cell") {
+					for _, cell := range getAdjacentLivingCells(b.Grid, i, j, 2) {
+						if b.Rules.WarriorInvasion() {
+							kill(&newGrid[cell.I][cell.J])
+						}
+					}
 				}
 			} else {
-				if b.Rules.Reproduce(b.Grid, i, j) {
-					newGrid[i][j].State = "ALIVE"
+				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce == true {
+					create(&newGrid[i][j])
+					if mutation.CanMutate(newGrid[i][j], mutantParents) {
+						mutation.FindMutation(&newGrid[i][j], mutantParents)
+					}
 				}
 			}
 		}
