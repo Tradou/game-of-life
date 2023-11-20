@@ -22,6 +22,7 @@ type Ruler interface {
 	OverPopulation(grid Grid, i, j int) bool
 	Reproduce(grid Grid, i, j int) (bool, int, int)
 	DieFromInstability(grid Grid, i, j int) bool
+	WarriorInvasion() bool
 }
 
 const (
@@ -95,6 +96,13 @@ func (b *Board) Update() {
 				}
 				if isMutant(b.Grid[i][j]) && b.Rules.DieFromInstability(b.Grid, i, j) {
 					kill(&newGrid[i][j])
+				}
+				if haveMutation(b.Grid[i][j], "Warrior cell") {
+					for _, cell := range getAdjacentLivingCells(b.Grid, i, j, 2) {
+						if b.Rules.WarriorInvasion() {
+							kill(&b.Grid[cell.I][cell.J])
+						}
+					}
 				}
 			} else {
 				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce == true {

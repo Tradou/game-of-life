@@ -2,6 +2,7 @@ package board
 
 import (
 	"game-of-life/mutation"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -134,6 +135,35 @@ func TestHaveMutation(t *testing.T) {
 			got := haveMutation(tt.grid[tt.row][tt.col], mutationName)
 			if got != tt.expectedMutation {
 				t.Errorf("haveMutation(%v, %d, %d) = %t, want %t", tt.grid, tt.row, tt.col, got, tt.expectedMutation)
+			}
+		})
+	}
+}
+
+func TestGetAdjacentCells(t *testing.T) {
+	type cells []struct {
+		I int
+		J int
+	}
+
+	tests := []struct {
+		name          string
+		grid          Grid
+		row, col      int
+		radius        int
+		expectedCells cells
+	}{
+		{name: "Empty grid", grid: Grid{{}}, row: 0, col: 0, radius: 1, expectedCells: cells{}},
+		{name: "Grid with one cell not alive", grid: Grid{{{State: false}}}, row: 0, col: 0, radius: 1, expectedCells: cells{}},
+		{name: "Grid with only one cell alive", grid: Grid{{{State: true}}}, row: 0, col: 0, radius: 1, expectedCells: cells{}},
+		{name: "Grid with one cell alive", grid: Grid{{{State: true}, {State: false}}}, row: 0, col: 0, radius: 1, expectedCells: cells{}},
+		{name: "Grid with three cells alive", grid: Grid{{{State: true}, {State: false}}, {{State: true}, {State: true}}}, row: 0, col: 1, radius: 1, expectedCells: cells{{I: 0, J: 0}, {I: 1, J: 0}, {I: 1, J: 1}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := getAdjacentLivingCells(tt.grid, tt.row, tt.col, tt.radius)
+			if !assert.ElementsMatch(t, got, tt.expectedCells) {
+				t.Errorf("getAdjacentLivingCells(%v, %d, %d, %d) = %v, want %v", tt.grid, tt.row, tt.col, tt.radius, got, tt.expectedCells)
 			}
 		})
 	}
