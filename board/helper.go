@@ -2,8 +2,9 @@ package board
 
 import "game-of-life/mutation"
 
-func CountNeighbors(grid Grid, i, j int) int {
+func CountNeighbors(grid Grid, i, j int) (int, int) {
 	neighbors := 0
+	mNeighbors := 0
 
 	for di := -1; di <= 1; di++ {
 		for dj := -1; dj <= 1; dj++ {
@@ -15,13 +16,16 @@ func CountNeighbors(grid Grid, i, j int) int {
 
 			if IsInside(adjacentI, adjacentJ, len(grid), len(grid[0])) {
 				if isAlive(grid[adjacentI][adjacentJ]) {
+					if isMutant(grid[adjacentI][adjacentJ]) {
+						mNeighbors++
+					}
 					neighbors++
 				}
 			}
 		}
 	}
 
-	return neighbors
+	return neighbors, mNeighbors
 }
 
 func IsInside(i, j, rows, cols int) bool {

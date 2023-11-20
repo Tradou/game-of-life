@@ -40,10 +40,10 @@ func TestIsInside(t *testing.T) {
 
 func TestCountNeighbors(t *testing.T) {
 	tests := []struct {
-		name          string
-		grid          Grid
-		row, col      int
-		expectedAlive int
+		name                          string
+		grid                          Grid
+		row, col                      int
+		expectedAlive, expectedMutant int
 	}{
 		{name: "NoNeighbors", grid: Grid{{{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1},
 		{name: "OneNeighbor", grid: Grid{{{State: "ALIVE"}, {State: "DEAD"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "ALIVE"}, {State: "DEAD"}}, {{State: "DEAD"}, {State: "DEAD"}, {State: "DEAD"}}}, row: 1, col: 1, expectedAlive: 1},
@@ -54,9 +54,12 @@ func TestCountNeighbors(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := CountNeighbors(tt.grid, tt.row, tt.col)
-			if got != tt.expectedAlive {
-				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, got, tt.expectedAlive)
+			gotNeighbors, gotMutants := CountNeighbors(tt.grid, tt.row, tt.col)
+			if gotNeighbors != tt.expectedAlive {
+				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, gotNeighbors, tt.expectedAlive)
+			}
+			if gotMutants != tt.expectedMutant {
+				t.Errorf("CountNeighbors(%v, %d, %d) = %d, want %d", tt.grid, tt.row, tt.col, gotMutants, tt.expectedMutant)
 			}
 		})
 	}
