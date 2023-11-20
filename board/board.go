@@ -21,6 +21,7 @@ type Ruler interface {
 	UnderPopulation(grid Grid, i, j int) bool
 	OverPopulation(grid Grid, i, j int) bool
 	Reproduce(grid Grid, i, j int) (bool, int, int)
+	DieFromInstability(grid Grid, i, j int) bool
 }
 
 const (
@@ -90,6 +91,9 @@ func (b *Board) Update() {
 		for j := range b.Grid[i] {
 			if isAlive(b.Grid[i][j]) {
 				if b.Rules.UnderPopulation(b.Grid, i, j) || b.Rules.OverPopulation(b.Grid, i, j) {
+					newGrid[i][j].State = "DEAD"
+				}
+				if isMutant(b.Grid[i][j]) && b.Rules.DieFromInstability(b.Grid, i, j) {
 					newGrid[i][j].State = "DEAD"
 				}
 			} else {

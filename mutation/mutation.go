@@ -11,14 +11,17 @@ var mutations = []Attribute{
 	{
 		Name:        "Lonely Cell",
 		Probability: 0.2,
+		Stability:   80,
 	},
 	{
 		Name:        "Friendly Cell",
 		Probability: 0.07,
+		Stability:   80,
 	},
 	{
 		Name:        "Pregnant Cell",
 		Probability: 0.02,
+		Stability:   80,
 	},
 }
 
@@ -30,6 +33,7 @@ type Cell struct {
 type Attribute struct {
 	Name        string
 	Probability float64
+	Stability   int
 	Fn          func()
 }
 

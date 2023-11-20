@@ -2,6 +2,7 @@ package rules
 
 import (
 	"game-of-life/board"
+	"math/rand"
 )
 
 type Rules struct{}
@@ -29,4 +30,8 @@ func (r *Rules) Reproduce(grid board.Grid, i, j int) (bool, int, int) {
 	n, m := board.CountNeighbors(grid, i, j)
 
 	return n == 3, n, m
+}
+
+func (r *Rules) DieFromInstability(grid board.Grid, i, j int) bool {
+	return rand.Intn(100) < grid[i][j].Mutation.Stability
 }
