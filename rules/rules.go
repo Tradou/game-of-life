@@ -25,8 +25,8 @@ func (r *Rules) OverPopulation(grid board.Grid, i, j int) bool {
 	return neighbors > 3
 }
 
-func (r *Rules) Reproduce(grid board.Grid, i, j int) bool {
-	neighbors, _ := board.CountNeighbors(grid, i, j)
+func (r *Rules) Reproduce(grid board.Grid, i, j int) (bool, int, int) {
+	n, m := board.CountNeighbors(grid, i, j)
 
-	return neighbors == 3
+	return n == 3, n, m
 }

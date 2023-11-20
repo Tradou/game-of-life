@@ -1,6 +1,7 @@
 package mutation
 
 import (
+	"math"
 	"math/rand"
 )
 
@@ -28,21 +29,25 @@ type Cell struct {
 
 type Attribute struct {
 	Name        string
-	Probability float32
+	Probability float64
 	Fn          func()
 }
 
-func CanMutate(c Cell) bool {
-	return c.State == "ALIVE" && c.Mutation.Name == "" && rand.Intn(100) <= pMutate*100
+func CanMutate(c Cell, mutantParent int) bool {
+	return c.State == "ALIVE" && c.Mutation.Name == "" && rand.Intn(100) <= int(pModifier(mutantParent)*pMutate*100)
 }
 
-func FindMutation(c *Cell) Attribute {
+func FindMutation(c *Cell, mutantParent int) Attribute {
 	for _, m := range mutations {
 		p := rand.Intn(100)
-		if p < int(m.Probability*100) {
+		if p < int(pModifier(mutantParent)*m.Probability*100) {
 			c.Mutation = m
 			break
 		}
 	}
 	return Attribute{}
+}
+
+func pModifier(p int) float64 {
+	return math.Pow(2, float64(p))
 }

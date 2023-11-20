@@ -20,7 +20,7 @@ type Grid [][]mutation.Cell
 type Ruler interface {
 	UnderPopulation(grid Grid, i, j int) bool
 	OverPopulation(grid Grid, i, j int) bool
-	Reproduce(grid Grid, i, j int) bool
+	Reproduce(grid Grid, i, j int) (bool, int, int)
 }
 
 const (
@@ -43,8 +43,8 @@ func GenerateCell() Grid {
 		for j := range grid[i] {
 			if rand.Intn(100) <= pGenerate*100 {
 				grid[i][j].State = "ALIVE"
-				if mutation.CanMutate(grid[i][j]) {
-					mutation.FindMutation(&grid[i][j])
+				if mutation.CanMutate(grid[i][j], 0) {
+					mutation.FindMutation(&grid[i][j], 0)
 				}
 			} else {
 				grid[i][j].State = "DEAD"
@@ -93,10 +93,10 @@ func (b *Board) Update() {
 					newGrid[i][j].State = "DEAD"
 				}
 			} else {
-				if b.Rules.Reproduce(b.Grid, i, j) {
+				if canReproduce, _, mutantParents := b.Rules.Reproduce(b.Grid, i, j); canReproduce == true {
 					newGrid[i][j].State = "ALIVE"
-					if mutation.CanMutate(b.Grid[i][j]) {
-						mutation.FindMutation(&newGrid[i][j])
+					if mutation.CanMutate(b.Grid[i][j], mutantParents) {
+						mutation.FindMutation(&newGrid[i][j], mutantParents)
 					}
 				}
 			}
