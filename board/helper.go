@@ -33,7 +33,7 @@ func IsInside(i, j, rows, cols int) bool {
 }
 
 func isAlive(c mutation.Cell) bool {
-	return c.State == "ALIVE"
+	return c.State
 }
 
 func isMutant(c mutation.Cell) bool {

@@ -21,7 +21,7 @@ var mutations = []Attribute{
 }
 
 type Cell struct {
-	State    string
+	State    bool
 	Mutation Attribute
 }
 
@@ -33,7 +33,7 @@ type Attribute struct {
 }
 
 func CanMutate(c Cell, mutantParent int) bool {
-	return c.State == "ALIVE" && c.Mutation.Name == "" && rand.Intn(100) <= int(pModifier(mutantParent)*pMutate*100)
+	return c.State && c.Mutation.Name == "" && rand.Intn(100) <= int(pModifier(mutantParent)*pMutate*100)
 }
 
 func FindMutation(c *Cell, mutantParent int) Attribute {
